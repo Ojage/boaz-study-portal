@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../../components/ui/Card";
@@ -150,26 +150,54 @@ function fileToMeta(file: File): UploadedDocumentMeta {
 }
 
 function Stepper({ step }: { step: number }) {
-  const stepsDef = [
-    "Informations Personnelles",
-    "Détails de la Formation",
-    "Informations Financières\net Autres Détails"
+  const allSteps = [
+    "Mes informations",
+    "Détails de la formation",
+    "Informations Financières\net Autres Détails",
+    "Principe de paiement",
+    "Mode de paiement",
+    "Etablissement bancaire",
+    "Coordonnées bancaires",
+    "Proforma",
+    "Mon contrat",
+    "Dépot de preuve"
   ];
+
+  const windowIndex = Math.floor((step - 1) / 3);
+  const startIdx = windowIndex * 3;
+  const currentWindowSteps = allSteps.slice(startIdx, startIdx + 3);
+
   return (
-    <div className="w-full max-w-[560px] mx-auto mb-20 mt-6 relative">
-      <div className="flex items-center justify-between relative z-10 px-8">
-        <div className="absolute left-[12%] right-[12%] top-1/2 -translate-y-1/2 h-[1px] bg-[#CBD5E1] z-0"></div>
-        {stepsDef.map((title, idx) => {
-          const num = (idx + 1).toString().padStart(2, "0");
-          const isActive = step === (idx + 1);
-          const isPast = step > (idx + 1);
+    <div className="w-full max-w-[580px] mx-auto mb-20 mt-6 relative">
+      <div className="flex items-center justify-between relative z-10 px-8 flex-wrap">
+        <div className="absolute left-[12%] right-[12%] top-[15px] -translate-y-1/2 h-[2px] bg-[#E2E8F0] z-0">
+          <div 
+            className="absolute left-0 top-0 bottom-0 bg-[#3A73FA] transition-all duration-300" 
+            style={{ 
+              width: step % 3 === 0 ? '100%' : step % 3 === 2 ? '50%' : '0%' 
+            }}
+          />
+        </div>
+        {currentWindowSteps.map((title, idx) => {
+          const actualStepNum = startIdx + idx + 1;
+          const num = actualStepNum.toString().padStart(2, "0");
+          const isActive = step === actualStepNum;
+          const isPast = step > actualStepNum;
           
           return (
             <div key={idx} className="relative z-10 flex flex-col items-center">
-              <div className={`flex items-center justify-center w-[30px] h-[30px] rounded-full text-[12px] tracking-[0.02em] font-semibold ${isActive || isPast ? "bg-[#3A73FA] text-white" : "bg-white border-[1.5px] border-[#CBD5E1] text-[#A0AEC0]"}`}>
-                {num}
-              </div>
-              <div className={`absolute top-10 whitespace-pre-wrap text-center leading-[1.3] w-36 text-[11px] font-medium ${isActive ? "text-[#3A73FA]" : "text-[#A0AEC0]"}`}>
+              {isPast ? (
+                <div className="flex items-center justify-center w-[30px] h-[30px] rounded-full bg-[#3A73FA]/[0.08] border-[1.5px] border-[#3A73FA] text-[#3A73FA] shrink-0">
+                   <svg className="w-[14px] h-[14px] ml-[0.5px] mt-[0.5px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                   </svg>
+                </div>
+              ) : (
+                <div className={`flex items-center justify-center w-[30px] h-[30px] rounded-full text-[12px] tracking-[0.02em] font-semibold shrink-0 ${isActive ? "bg-[#3A73FA] text-white" : "bg-white border-[2px] border-[#E2E8F0] text-[#A0AEC0]"}`}>
+                  {num}
+                </div>
+              )}
+              <div className={`absolute top-[42px] whitespace-pre-wrap text-center leading-[1.4] w-40 text-[11px] font-semibold ${isActive ? "text-[#3A73FA]" : (isPast ? "text-[#1A202C]" : "text-[#A0AEC0]")}`}>
                 {title}
               </div>
             </div>
@@ -266,6 +294,10 @@ export function SubscribeWizardPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function nextFromStep3() {
+    setStep(4);
   }
 
   async function payFromWallet() {
@@ -517,10 +549,53 @@ export function SubscribeWizardPage() {
           </div>
         ) : null}
 
-        {step === 3 ? (
+        {step === 4 ? (
+          <div className="mt-14 max-w-2xl mx-auto px-4">
+            <h2 className="text-[24px] font-medium text-center text-black mb-12">Sélectionnez votre mode de paiement</h2>
+            
+            <div className="flex flex-col gap-6">
+              {/* Paiement total */}
+              <button 
+                type="button"
+                onClick={() => setStep(5)}
+                className="w-full bg-white rounded-2xl p-6 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-gray-50 hover:border-[#3A73FA]/30 transition-all group"
+              >
+                <span className="text-[15px] font-medium text-[#718096] ml-auto mr-auto pl-6">Paiement total</span>
+                <svg className="w-5 h-5 text-[#718096] group-hover:text-[#3A73FA] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Paiement par financement */}
+              <div className="w-full">
+                <button 
+                  type="button"
+                  onClick={() => setStep(5)}
+                  className="w-full bg-white rounded-t-2xl p-6 flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-gray-50 hover:border-[#3A73FA]/30 transition-all group"
+                >
+                  <span className="text-[15px] font-medium text-[#718096] ml-auto mr-auto pl-6">Paiement par financement</span>
+                  <svg className="w-5 h-5 text-[#718096] group-hover:text-[#3A73FA] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div className="bg-white rounded-b-2xl p-8 pt-2 shadow-[0_10px_25px_rgba(0,0,0,0.04)] border-x border-b border-gray-50 text-center">
+                  <p className="text-[#3A73FA] text-[13px] italic leading-relaxed">
+                    Choisissez cette option si vous avez souscrits à un <br/> financement
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center mt-16 pb-4">
+              {/* Optional: Add back button if needed, mockup doesn't show one explicitly but let's stick to mockup */}
+            </div>
+          </div>
+        ) : null}
+
+        {step === 5 ? (
           <div className="mt-14 max-w-3xl mx-auto grid gap-4">
             <div className="rounded-2xl border border-[color:var(--card-border)] bg-bg p-6 text-center">
-              <div className="text-lg font-semibold text-[#0B1B3A]">{t("student.subscribe.step4.title")}</div>
+              <div className="text-lg font-semibold text-[#0B1B3A]">{t("student.subscribe.step4.title")} (Wallet)</div>
               <div className="mt-3 text-sm text-[#718096]">
                 {t("student.subscribe.step4.price", { price: price.toLocaleString() })}
               </div>
@@ -554,11 +629,11 @@ export function SubscribeWizardPage() {
             <div className="flex items-center justify-center gap-6 mt-16 pb-4">
               <button 
                 type="button" 
-                onClick={() => setStep(2)} 
+                onClick={() => setStep(4)} 
                 disabled={loading}
-                className="px-10 py-[10px] rounded-full bg-[#E2E8F0] text-[#718096] font-semibold text-[13px] hover:bg-[#CBD5E1] transition-colors"
+                className="px-10 py-[10px] rounded-full bg-[#D1D5DB] text-white font-semibold text-[13px] hover:bg-[#9CA3AF] transition-colors shadow-sm"
               >
-                Annuler
+                Retour
               </button>
               <div className="text-xs text-[#A0AEC0] font-medium pt-2">
                 {subscription ? t("student.subscribe.step4.ref", { id: subscription.id }) : ""}
@@ -570,4 +645,3 @@ export function SubscribeWizardPage() {
     </div>
   );
 }
-
