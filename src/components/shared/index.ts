@@ -9,3 +9,4 @@ export { ErrorBoundary } from "./ErrorBoundary";
 export { GlobalErrorListener } from "./GlobalErrorListener";
 export { AuthBootstrap } from "./AuthBootstrap";
 export { SettingsMenu } from "./SettingsMenu";
+export { NotFoundPage } from "./NotFoundPage";

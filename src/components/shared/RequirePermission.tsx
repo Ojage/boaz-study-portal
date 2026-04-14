@@ -13,6 +13,6 @@ export function RequirePermission({
   const { hasAll } = usePermissions();
   const allowed = hasAll(permissions);
 
-  if (!allowed) return <Navigate to={PATHS.app.root} replace />;
+  if (!allowed) return <Navigate to={PATHS.notFound} replace />;
   return <>{children}</>;
 }

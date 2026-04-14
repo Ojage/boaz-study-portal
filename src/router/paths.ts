@@ -1,11 +1,24 @@
 export const PATHS = {
   root: "/",
   login: "/login",
+  notFound: "/404",
   app: {
     root: "/app",
-    tickets: "/app/tickets",
-    documents: "/app/documents",
-    notifications: "/app/notifications",
+    proofs: "/app/proofs",
+    wallet: "/app/wallet",
+    affiliation: "/app/affiliation",
+    invoices: "/app/invoices",
+    settings: "/app/settings",
+    financingNew: "/app/financing/new",
+    subscribe: {
+      root: "/app/subscribe",
+    },
+    subscriptions: {
+      root: "/app/subscriptions",
+      services: "/app/subscriptions/services",
+      financing: "/app/subscriptions/financing",
+      repayments: "/app/subscriptions/repayments",
+    },
   },
   admin: {
     root: "/admin",
@@ -22,9 +35,19 @@ export const PATHS = {
 
 export const SEGMENTS = {
   app: {
-    tickets: "tickets",
-    documents: "documents",
-    notifications: "notifications",
+    proofs: "proofs",
+    wallet: "wallet",
+    affiliation: "affiliation",
+    invoices: "invoices",
+    settings: "settings",
+    financingNew: "financing/new",
+    subscribe: "subscribe/:serviceId",
+    subscriptions: {
+      root: "subscriptions",
+      services: "subscriptions/services",
+      financing: "subscriptions/financing",
+      repayments: "subscriptions/repayments",
+    },
   },
   admin: {
     profile: "profile",
