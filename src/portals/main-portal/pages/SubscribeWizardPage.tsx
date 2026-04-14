@@ -202,9 +202,6 @@ export function SubscribeWizardPage() {
   });
 
   const [docs, setDocs] = useState<LocalDoc[]>([]);
-  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
-  const selectedDoc = useMemo(() => docs.find((d) => d.meta.id === selectedDocId) ?? null, [docs, selectedDocId]);
-
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const price = isServiceId(serviceId) ? servicePriceXaf(serviceId) : 0;
 
@@ -425,80 +422,78 @@ export function SubscribeWizardPage() {
         ) : null}
 
         {step === 2 ? (
-          <div className="mt-14 grid gap-4">
-            <div className="grid gap-3 md:grid-cols-5">
-              <div className="md:col-span-2">
-                <div className="rounded-2xl border border-[color:var(--card-border)] bg-bg p-4">
-                  <div className="text-sm font-semibold text-text">{t("student.subscribe.step3.uploadTitle")}</div>
-                  <p className="mt-1 text-xs text-muted">{t("student.subscribe.step3.uploadHint")}</p>
-                  <div className="mt-3">
-                    <input
-                      type="file"
-                      accept="application/pdf,image/*"
-                      multiple
-                      onChange={(e) => {
-                        const files = Array.from(e.target.files ?? []);
-                        const mapped: LocalDoc[] = files.map((f) => ({
-                          file: f,
-                          meta: fileToMeta(f),
-                          url: URL.createObjectURL(f),
-                        }));
-                        setDocs((d) => [...mapped, ...d]);
-                        if (mapped[0]) setSelectedDocId(mapped[0].meta.id);
-                        e.currentTarget.value = "";
-                      }}
-                    />
-                  </div>
-
-                  <div className="mt-4 grid gap-2">
-                    {docs.length ? (
-                      docs.map((d) => (
-                        <button
-                          type="button"
-                          key={d.meta.id}
-                          onClick={() => setSelectedDocId(d.meta.id)}
-                          className={[
-                            "text-left rounded-xl border px-3 py-2 text-xs transition",
-                            selectedDocId === d.meta.id
-                              ? "border-[#3A73FA] bg-[#3A73FA]/10 text-[#3A73FA]"
-                              : "border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100",
-                          ].join(" ")}
-                        >
-                          <div className="truncate font-semibold">{d.meta.name}</div>
-                          <div className="truncate">{(d.meta.sizeBytes / 1024).toFixed(0)} KB</div>
-                        </button>
-                      ))
-                    ) : (
-                      <div className="text-sm text-gray-400">{t("student.subscribe.step3.empty")}</div>
-                    )}
+          <div className="mt-14 max-w-[480px] mx-auto px-4">
+            <div className="flex flex-col gap-6">
+              <input
+                className="w-full h-[46px] px-5 rounded-lg bg-[#F8F9Fa] border-0 text-[13px] placeholder-[#A0AEC0] focus:ring-2 focus:ring-[#3A73FA]/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                placeholder="Nom de l'établissement d'accueil"
+                value={applicant.university ?? ''}
+                onChange={(e) => setApplicant((a) => ({ ...a, university: e.target.value }))}
+              />
+              <input
+                className="w-full h-[46px] px-5 rounded-lg bg-[#F8F9Fa] border-0 text-[13px] placeholder-[#A0AEC0] focus:ring-2 focus:ring-[#3A73FA]/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                placeholder="Titre de la formation"
+                value={applicant.notes ?? ''}
+                onChange={(e) => setApplicant((a) => ({ ...a, notes: e.target.value }))}
+              />
+              <input
+                className="w-full h-[46px] px-5 rounded-lg bg-[#F8F9Fa] border-0 text-[13px] placeholder-[#A0AEC0] focus:ring-2 focus:ring-[#3A73FA]/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                placeholder="Ville"
+                value={applicant.destinationCountry ?? ''}
+                onChange={(e) => setApplicant((a) => ({ ...a, destinationCountry: e.target.value }))}
+              />
+              <div>
+                <div className="text-[11px] font-medium text-[#718096] mb-2 tracking-wide">Date de début de la formation</div>
+                <div className="relative">
+                  <input
+                    className="w-full h-[46px] px-5 rounded-lg bg-[#F8F9Fa] border-0 text-[13px] placeholder-[#A0AEC0] focus:ring-2 focus:ring-[#3A73FA]/50 shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                    placeholder="jj/mm/aa"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#A0AEC0]">
+                    <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
                   </div>
                 </div>
               </div>
-
-              <div className="md:col-span-3">
-                <div className="rounded-2xl border border-[color:var(--card-border)] bg-bg p-4">
-                  <div className="text-sm font-semibold text-text">{t("student.subscribe.step3.previewTitle")}</div>
-                  <div className="mt-3">
-                    {selectedDoc ? (
-                      selectedDoc.file.type === "application/pdf" ? (
-                        <embed
-                          src={selectedDoc.url}
-                          type="application/pdf"
-                          className="h-[420px] w-full rounded-xl border border-[color:var(--card-border)] bg-white"
-                        />
-                      ) : (
-                        <img
-                          src={selectedDoc.url}
-                          alt=""
-                          className="max-h-[420px] w-full rounded-xl border border-[color:var(--card-border)] object-contain bg-white"
-                        />
-                      )
-                    ) : (
-                      <div className="text-sm text-gray-400">{t("student.subscribe.step3.noPreview")}</div>
-                    )}
+              <label>
+                <div className="text-[11px] font-medium text-[#718096] mb-2 tracking-wide">Attestation d'inscription / Lettre d'admission</div>
+                <div className="flex h-[46px] bg-[#F8F9Fa] rounded-lg overflow-hidden cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.03)] border-0 relative">
+                  <div className="h-full px-5 bg-[#E2E8F0]/70 flex items-center justify-center text-[12px] font-medium text-[#4A5568] hover:bg-[#E2E8F0] transition">
+                    Choisir un fichier
                   </div>
+                  <div className="h-full px-4 flex items-center text-[12px] text-[#A0AEC0]">
+                    Aucun fichier sélectionné
+                  </div>
+                  <input
+                    type="file"
+                    accept="application/pdf,image/*"
+                    multiple
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files ?? []);
+                      const mapped: LocalDoc[] = files.map((f) => ({
+                        file: f,
+                        meta: fileToMeta(f),
+                        url: URL.createObjectURL(f),
+                      }));
+                      setDocs((d) => [...mapped, ...d]);
+                      e.currentTarget.value = "";
+                    }}
+                  />
                 </div>
-              </div>
+                {docs.length > 0 && (
+                  <div className="mt-2 text-xs text-[#48BB78] flex items-center gap-1.5">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Fichier chargé avec succès
+                  </div>
+                )}
+              </label>
             </div>
 
             <div className="flex items-center justify-center gap-6 mt-16 pb-4">
@@ -506,9 +501,9 @@ export function SubscribeWizardPage() {
                 type="button" 
                 onClick={() => setStep(1)} 
                 disabled={loading}
-                className="px-10 py-[10px] rounded-full bg-[#E2E8F0] text-[#718096] font-semibold text-[13px] hover:bg-[#CBD5E1] transition-colors"
+                className="px-10 py-[10px] rounded-full bg-[#D1D5DB] text-white font-semibold text-[13px] hover:bg-[#9CA3AF] transition-colors shadow-sm"
               >
-                Annuler
+                Retour
               </button>
               <button 
                 type="button" 
