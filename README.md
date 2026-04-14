@@ -39,4 +39,8 @@ The UI supports **English** and **French**.
 - Typed translation resources: `src/i18n/en.ts` and `src/i18n/fr.ts`
 - Language persistence: `localStorage` key `studyportal.language`
 - UI switcher: `src/components/shared/LanguageToggle.tsx`
+
+## Product flow diagrams (spec)
+
+Flow diagrams for the described student + admin portal are documented in `docs/app-flows.md`.
 # boaz-study-portal

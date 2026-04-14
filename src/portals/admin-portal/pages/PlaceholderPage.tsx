@@ -5,7 +5,7 @@ export function PlaceholderPage({ titleKey }: { titleKey: string }) {
   const { t } = useTranslation("translation");
   return (
     <Card className="p-5 md:p-6">
-      <h2 className="text-lg font-semibold text-text">{t(titleKey)}</h2>
+      <h2 className="text-lg font-semibold text-text">{t(titleKey as any)}</h2>
       <p className="mt-2 text-body text-muted">Coming soon.</p>
     </Card>
   );
