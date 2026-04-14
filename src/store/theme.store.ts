@@ -8,9 +8,9 @@ function safeReadStorage(): ThemeMode {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw === "light" || raw === "dark" || raw === "system") return raw;
-    return "system";
+    return "light";
   } catch {
-    return "system";
+    return "light";
   }
 }
 

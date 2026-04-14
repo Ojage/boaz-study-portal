@@ -296,10 +296,6 @@ export function SubscribeWizardPage() {
     }
   }
 
-  async function nextFromStep3() {
-    setStep(4);
-  }
-
   async function payFromWallet() {
     if (!user) return;
     const sub = await ensureDraft();
@@ -593,9 +589,64 @@ export function SubscribeWizardPage() {
         ) : null}
 
         {step === 5 ? (
+          <div className="mt-14 max-w-2xl mx-auto px-4">
+            <h2 className="text-[24px] font-medium text-center text-black mb-12">Sélectionnez votre mode de paiement</h2>
+            
+            <div className="flex flex-col gap-4">
+              {/* Dépôt Bancaire */}
+              <button 
+                type="button"
+                onClick={() => setStep(6)}
+                className="w-full bg-white rounded-2xl px-8 py-5 flex items-center justify-between shadow-[0_4px_24px_rgba(0,0,0,0.05)] border border-transparent hover:border-[#3A73FA]/20 transition-all group"
+              >
+                <span className="text-[15px] font-medium text-[#718096] mx-auto pl-4">Dépôt Bancaire</span>
+                <svg className="w-5 h-5 text-[#A0AEC0] group-hover:text-[#3A73FA] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Virement Bancaire Direct */}
+              <button 
+                type="button"
+                onClick={() => setStep(6)}
+                className="w-full bg-white rounded-2xl px-8 py-5 flex items-center justify-between shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent hover:border-[#3A73FA]/20 transition-all group"
+              >
+                <span className="text-[15px] font-medium text-[#A0AEC0] mx-auto pl-4">Virement Bancaire Direct</span>
+                <svg className="w-5 h-5 text-[#A0AEC0] group-hover:text-[#3A73FA] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Mobile Money */}
+              <button 
+                type="button"
+                onClick={() => setStep(6)}
+                className="w-full bg-white rounded-2xl px-8 py-5 flex items-center justify-between shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-transparent hover:border-[#3A73FA]/20 transition-all group"
+              >
+                <span className="text-[15px] font-medium text-[#A0AEC0] mx-auto pl-4">Mobile Money</span>
+                <svg className="w-5 h-5 text-[#A0AEC0] group-hover:text-[#3A73FA] transition-colors shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center mt-14 pb-4">
+              <button 
+                type="button" 
+                onClick={() => setStep(4)} 
+                disabled={loading}
+                className="px-10 py-[10px] rounded-full bg-[#D1D5DB] text-white font-semibold text-[13px] hover:bg-[#9CA3AF] transition-colors shadow-sm"
+              >
+                Retour
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {step === 6 ? (
           <div className="mt-14 max-w-3xl mx-auto grid gap-4">
             <div className="rounded-2xl border border-[color:var(--card-border)] bg-bg p-6 text-center">
-              <div className="text-lg font-semibold text-[#0B1B3A]">{t("student.subscribe.step4.title")} (Wallet)</div>
+              <div className="text-lg font-semibold text-[#0B1B3A]">{t("student.subscribe.step4.title")}</div>
               <div className="mt-3 text-sm text-[#718096]">
                 {t("student.subscribe.step4.price", { price: price.toLocaleString() })}
               </div>
@@ -607,7 +658,6 @@ export function SubscribeWizardPage() {
                 <div className="w-full max-w-sm rounded-xl border border-gray-200 bg-white p-5 shadow-sm text-left">
                   <div className="text-sm font-bold text-[#0B1B3A]">{t("student.subscribe.step4.walletTitle")}</div>
                   <p className="mt-1.5 text-xs text-[#718096]">{t("student.subscribe.step4.walletHint")}</p>
-                  
                   <div className="mt-6 flex justify-center">
                     <button
                       type="button"
@@ -618,7 +668,6 @@ export function SubscribeWizardPage() {
                       {t("student.subscribe.step4.walletPay")}
                     </button>
                   </div>
-                  
                   {(walletBalance ?? 0) < price ? (
                     <p className="mt-3 text-center text-xs font-semibold text-red-500">{t("student.subscribe.step4.insufficient")}</p>
                   ) : null}
@@ -629,7 +678,7 @@ export function SubscribeWizardPage() {
             <div className="flex items-center justify-center gap-6 mt-16 pb-4">
               <button 
                 type="button" 
-                onClick={() => setStep(4)} 
+                onClick={() => setStep(5)} 
                 disabled={loading}
                 className="px-10 py-[10px] rounded-full bg-[#D1D5DB] text-white font-semibold text-[13px] hover:bg-[#9CA3AF] transition-colors shadow-sm"
               >

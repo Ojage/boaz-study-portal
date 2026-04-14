@@ -30,6 +30,6 @@ export function detectInitialLanguage(): AppLanguage {
   const stored = readStoredLanguage();
   if (stored) return stored;
   if (typeof navigator !== "undefined") return normalizeLanguage(navigator.language);
-  return "en";
+  return "fr";
 }
 
